@@ -13,26 +13,15 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 public class AlertRabbit {
-    public static Connection getConnection() {
-        Connection cn;
+    public static void main(String[] args) {
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
             Class.forName(config.getProperty("jdbc.driver"));
-            cn = DriverManager.getConnection(
+            try (Connection cn = DriverManager.getConnection(
                     config.getProperty("jdbc.url"),
                     config.getProperty("jdbc.username"),
-                    config.getProperty("jdbc.password")
-            );
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        return cn;
-    }
-
-    public static void main(String[] args) {
-        try {
-            try (Connection cn = getConnection()) {
+                    config.getProperty("jdbc.password"))) {
                 Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
                 scheduler.start();
                 JobDataMap data = new JobDataMap();
@@ -41,8 +30,8 @@ public class AlertRabbit {
                         .usingJobData(data)
                         .build();
                 SimpleScheduleBuilder times = simpleSchedule()
-                        .withIntervalInSeconds(10);
-                /*.repeatForever()*/
+                        .withIntervalInSeconds(Integer.parseInt(config.getProperty("rabbit.interval")))
+                        .repeatForever();
                 Trigger trigger = newTrigger()
                         .startNow()
                         .withSchedule(times)
