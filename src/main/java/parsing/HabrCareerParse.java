@@ -5,14 +5,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.DateTimeParser;
 
 import java.io.IOException;
 
 public class HabrCareerParse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
-
     private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
+    private final DateTimeParser dateTimeParser;
+
+    public HabrCareerParse(DateTimeParser dateTimeParser) {
+        this.dateTimeParser = dateTimeParser;
+    }
 
     private String retrieveDescription(String link) throws IOException {
         Connection connection = Jsoup.connect(link);
