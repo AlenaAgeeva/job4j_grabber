@@ -17,8 +17,7 @@ public class HabrCareerParse {
     private String retrieveDescription(String link) throws IOException {
         Connection connection = Jsoup.connect(link);
         Elements rows = connection.get().select(".section-box");
-        String desc = rows.select(".job_show_description__vacancy_description").first().text();
-        return desc;
+        return rows.select(".job_show_description__vacancy_description").first().text();
     }
 
     public static void main(String[] args) throws IOException {
