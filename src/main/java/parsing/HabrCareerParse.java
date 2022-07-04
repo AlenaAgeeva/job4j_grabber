@@ -24,8 +24,8 @@ public class HabrCareerParse implements Parse {
 
     private String retrieveDescription(String link) throws IOException {
         Connection connection = Jsoup.connect(link);
-        Elements rows = connection.get().select(".section-box");
-        return rows.select(".collapsible-description__content").first().text();
+        Element rows = connection.get().selectFirst(".style-ugc");
+        return rows.text();
     }
 
     @Override
