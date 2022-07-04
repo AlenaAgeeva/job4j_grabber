@@ -9,8 +9,7 @@ import utils.DateTimeParser;
 import utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class HabrCareerParse implements Parse {
 
@@ -28,39 +27,6 @@ public class HabrCareerParse implements Parse {
         Elements rows = connection.get().select(".section-box");
         return rows.select(".collapsible-description__content").first().text();
     }
-
-    public static void main(String[] args) throws IOException {
-//        List<Post> list = new ArrayList<>();
-//        for (int i = 1; i <= 1; i++) {
-//            Connection connection = Jsoup.connect(PAGE_LINK + "?page=" + i);
-//            Document document = connection.get();
-//            Elements rows = document.select(".vacancy-card__inner");
-//            rows.forEach(row -> {
-//                Element titleElement = row.select(".vacancy-card__title").first();
-//                Element linkElement = titleElement.child(0);
-//                String date = row.selectFirst(".basic-date").attr("datetime");
-//                String vacancyName = titleElement.text();
-//                String link = linkElement.attr("abs:href");
-//                Post post = null;
-//                try {
-//                    post = new Post(
-//                            vacancyName,
-//                            link,
-//                            new HabrCareerParse(new HabrCareerDateTimeParser()).retrieveDescription(link),
-//                            dateTimeParser.parse(date));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } catch (IllegalStateException e) {
-//                    e.printStackTrace();
-//                }
-//                list.add(post);
-//            });
-//            System.out.println(list);
-//        }
-        System.out.println(new HabrCareerParse(new HabrCareerDateTimeParser()).list(PAGE_LINK));
-
-    }
-
 
     @Override
     public List<Post> list(String l) {
