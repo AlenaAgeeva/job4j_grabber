@@ -6,10 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import utils.DateTimeParser;
-import utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HabrCareerParse implements Parse {
 
@@ -22,42 +22,36 @@ public class HabrCareerParse implements Parse {
         this.dateTimeParser = dateTimeParser;
     }
 
-    private String retrieveDescription(String link) throws IOException {
+    private String retrieveDescription(String link) {
         Connection connection = Jsoup.connect(link);
-        Element rows = connection.get().selectFirst(".style-ugc");
+        Element rows = null;
+        try {
+            rows = connection.get().selectFirst(".style-ugc");
+        } catch (IOException e) {
+            throw new IllegalArgumentException();
+        }
         return rows.text();
     }
 
     @Override
-    public List<Post> list(String l) {
+    public List<Post> list(String link) {
         List<Post> list = new ArrayList<>();
         for (int i = 1; i <= COUNT; i++) {
             try {
-                Connection connection = Jsoup.connect(PAGE_LINK + "?page=" + i);
-                Document document = null;
-                try {
-                    document = connection.get();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Connection connection = Jsoup.connect(link + i);
+                Document document = connection.get();
                 Elements rows = document.select(".vacancy-card__inner");
                 rows.forEach(row -> {
-                    Post post = null;
-                    try {
-                        post = getPost(row);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    list.add(post);
+                    list.add(getPost(row));
                 });
-            } catch (IllegalArgumentException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return list;
     }
 
-    private Post getPost(Element row) throws IOException {
+    private Post getPost(Element row) {
         Element titleElement = row.select(".vacancy-card__title").first();
         Element linkElement = titleElement.child(0);
         String date = row.selectFirst(".basic-date").attr("datetime");
@@ -66,7 +60,7 @@ public class HabrCareerParse implements Parse {
         return new Post(
                 vacancyName,
                 link,
-                new HabrCareerParse(new HabrCareerDateTimeParser()).retrieveDescription(link),
+                retrieveDescription(link),
                 dateTimeParser.parse(date));
     }
 }
