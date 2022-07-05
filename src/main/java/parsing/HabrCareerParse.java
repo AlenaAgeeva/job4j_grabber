@@ -45,7 +45,7 @@ public class HabrCareerParse implements Parse {
                     list.add(getPost(row));
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IllegalArgumentException();
             }
         }
         return list;
