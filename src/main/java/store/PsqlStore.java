@@ -27,8 +27,8 @@ public class PsqlStore implements Store, AutoCloseable {
 
     @Override
     public void save(Post post) {
-        try (PreparedStatement p = cnn.prepareStatement("insert into post(name,text,link,created) values(?,?,?,?)",
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement p = cnn.prepareStatement("insert into post(name,text,link,created) "
+                + "values(?,?,?,?) ON CONFLICT (link) DO NOTHING", Statement.RETURN_GENERATED_KEYS)) {
             p.setString(1, post.getTitle());
             p.setString(2, post.getDescription());
             p.setString(3, post.getLink());
@@ -96,11 +96,11 @@ public class PsqlStore implements Store, AutoCloseable {
         try (InputStream in = PsqlStore.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
             config.load(in);
-            PsqlStore psq = new PsqlStore(config);
-            psq.save(new Post("title", "link-5", "description", LocalDateTime.of(2019, 1, 23, 15, 56)));
-            System.out.println(psq.getAll());
-            System.out.println(psq.findById(3));
-            psq.close();
+            try (PsqlStore psq = new PsqlStore(config)) {
+                psq.save(new Post("title", "link-5", "description", LocalDateTime.of(2019, 1, 23, 15, 56)));
+                System.out.println(psq.getAll());
+                System.out.println(psq.findById(3));
+            }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
