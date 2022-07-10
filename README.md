@@ -10,3 +10,13 @@
 <h4 align="left">Updates</h4>
 <p align="left">1. New sites can be added to the project without changing the code.</p>
 <p align="left">2. In the project, you can do parallel parsing of sites.</p>
+<h2 align="left">Used technologies:</h2>
+<ul><li>JSOUP for parsing</li>
+<li>JDBC for manipulating with DB</li>
+<li>Quartz library for scheduling</li>
+<li>Slf4j for logging</li>
+</p>
+<p align="left">
+  <img src="https://user-images.githubusercontent.com/67174823/178151771-4a04984f-3f98-4395-ac19-41d3741e017e.jpg" width="85%">
+  <img src="https://user-images.githubusercontent.com/67174823/178151823-a0dad56e-a748-4f9d-b9a7-c01254504f81.jpg" width="85%">
+</p>
