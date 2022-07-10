@@ -2,16 +2,25 @@ package store;
 
 import parsing.Post;
 
-import java.io.InputStream;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * A class stores all parsed vacancies to a database.
+ * It implements Store and AutoCloseable interfaces.
+ *
+ * @author Alena Ageeva
+ */
 public class PsqlStore implements Store, AutoCloseable {
     private Connection cnn;
 
+    /**
+     * A constructor that creates initial connection to a database
+     *
+     * @param cfg Properties for a connection
+     */
     public PsqlStore(Properties cfg) {
         try {
             Class.forName(cfg.getProperty("jdbc.driver"));
@@ -25,6 +34,12 @@ public class PsqlStore implements Store, AutoCloseable {
         }
     }
 
+    /**
+     * A method gets a Post object in arguments and put it to a database table through prepareStatement.
+     * In addition, using generatedKeys it sets id por a Post object.
+     *
+     * @param post post object in arguments
+     */
     @Override
     public void save(Post post) {
         try (PreparedStatement p = cnn.prepareStatement("insert into post(name,text,link,created) "
@@ -44,6 +59,11 @@ public class PsqlStore implements Store, AutoCloseable {
         }
     }
 
+    /**
+     * A method get all uploaded Posts to a database table using prepareStatement
+     *
+     * @return a list of Posts
+     */
     @Override
     public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
@@ -59,6 +79,12 @@ public class PsqlStore implements Store, AutoCloseable {
         return posts;
     }
 
+    /**
+     * A method finds a certain Post object by ID in a database table
+     *
+     * @param id id for a search
+     * @return new Post object related to an ID in a database
+     */
     @Override
     public Post findById(int id) {
         Post post = null;
@@ -75,34 +101,32 @@ public class PsqlStore implements Store, AutoCloseable {
         return post;
     }
 
+    /**
+     * A method for generating Post object using ResultSet
+     *
+     * @param resultSet ResultSet from arguments
+     * @return new Post object
+     * @throws SQLException
+     */
     private Post generatePost(ResultSet resultSet) throws SQLException {
         return new Post(
                 resultSet.getInt("id"),
                 resultSet.getString("name"),
-                resultSet.getString("text"),
                 resultSet.getString("link"),
+                resultSet.getString("text"),
                 resultSet.getTimestamp("created").toLocalDateTime()
         );
     }
 
+    /**
+     * Overridden method of a AutoCloseable interface
+     *
+     * @throws Exception
+     */
     @Override
     public void close() throws Exception {
         if (cnn != null) {
             cnn.close();
-        }
-    }
-
-    public static void main(String[] args) {
-        try (InputStream in = PsqlStore.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
-            Properties config = new Properties();
-            config.load(in);
-            try (PsqlStore psq = new PsqlStore(config)) {
-                psq.save(new Post("title", "link-5", "description", LocalDateTime.of(2019, 1, 23, 15, 56)));
-                System.out.println(psq.getAll());
-                System.out.println(psq.findById(3));
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
         }
     }
 }

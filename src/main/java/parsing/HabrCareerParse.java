@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class represent itself a simple Html parser using Jsoup lib.
+ *
+ * @author Alena Ageeva
+ */
 public class HabrCareerParse implements Parse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
@@ -18,10 +23,21 @@ public class HabrCareerParse implements Parse {
     private static final int COUNT = 5;
     private static DateTimeParser dateTimeParser;
 
+    /**
+     * A constructor with arguments
+     *
+     * @param dateTimeParser an argument using for initialization of dateTimeParser.
+     */
     public HabrCareerParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
     }
 
+    /**
+     * A method parses a description of a vacancy on the html page.
+     *
+     * @param link a link for parsing
+     * @return String object
+     */
     private String retrieveDescription(String link) {
         Connection connection = Jsoup.connect(link);
         Element rows = null;
@@ -33,6 +49,13 @@ public class HabrCareerParse implements Parse {
         return rows.text();
     }
 
+    /**
+     * A method parses html pages and put results to a list for further work.
+     * Elements of the list are Post objects that will be stored and transferred to a database.
+     *
+     * @param link link a link for parsing
+     * @return list
+     */
     @Override
     public List<Post> list(String link) {
         List<Post> list = new ArrayList<>();
@@ -49,6 +72,13 @@ public class HabrCareerParse implements Parse {
         return list;
     }
 
+    /**
+     * A method parses a single vacancy page with extraction of title, link, description and posting date.
+     * In addition, it creates a Post object with all retrieved data as a result for return.
+     *
+     * @param row an Element for parsing data
+     * @return a Post object
+     */
     private Post getPost(Element row) {
         Element titleElement = row.select(".vacancy-card__title").first();
         Element linkElement = titleElement.child(0);

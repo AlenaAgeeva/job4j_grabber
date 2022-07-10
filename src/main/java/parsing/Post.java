@@ -3,6 +3,11 @@ package parsing;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * The class represents itself a simple example of a model data for parsing and storing actions.
+ *
+ * @author Alena ageeva
+ */
 public class Post {
     private int id;
     private String title;
@@ -67,12 +72,12 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{"
-                + "id=" + id
-                + ", title='" + title + '\''
-                + ", link='" + link + '\''
-                + ", description='" + description + '\''
-                + ", created=" + created + '}';
+        return
+                "___id____________" + id + System.lineSeparator()
+                        + "___title_________" + title + System.lineSeparator()
+                        + "___description___" + description + System.lineSeparator()
+                        + "___link__________" + link + System.lineSeparator()
+                        + "___created_______" + created + System.lineSeparator();
     }
 
     @Override
